@@ -31,3 +31,10 @@ codegen/
 
 # Cloud based storage dotfile
 .MATLABDriveTag
+
+# pycache folder
+__pycache__/
+
+# Jupyter notebook folder
+.ipynb_checkpoints/
+
