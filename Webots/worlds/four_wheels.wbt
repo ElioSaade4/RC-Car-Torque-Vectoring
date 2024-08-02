@@ -1,0 +1,266 @@
+#VRML_SIM R2023a utf8
+
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2023a/projects/objects/backgrounds/protos/TexturedBackground.proto"
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2023a/projects/objects/backgrounds/protos/TexturedBackgroundLight.proto"
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2023a/projects/objects/floors/protos/RectangleArena.proto"
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2023a/projects/appearances/protos/TireRubber.proto"
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2023a/projects/appearances/protos/Parquetry.proto"
+
+WorldInfo {
+  info [
+    "Description: Examples of four wheels vehicles"
+  ]
+  title "Four Wheels"
+  basicTimeStep 16
+  contactProperties [
+    ContactProperties {
+      material1 "road"
+      material2 "tire"
+      coulombFriction [
+        0.7
+      ]
+    }
+  ]
+}
+Viewpoint {
+  orientation -0.14497275461503184 0.15031680390517102 0.9779507957372212 1.5726292580312786
+  position 0.01242108576075042 -253.99714408552398 2.3230458324194134
+  follow "Car"
+  followType "Mounted Shot"
+}
+TexturedBackground {
+}
+TexturedBackgroundLight {
+}
+RectangleArena {
+  contactMaterial "road"
+  floorSize 100 500
+  floorTileSize 2 2
+  floorAppearance Parquetry {
+    type "light strip"
+  }
+}
+DEF Car Robot {
+  translation 0 -249.31 0.0975
+  rotation 0 1 0 0
+  children [
+    Gyro {
+      rotation 0 0 1 1.5708
+    }
+    Accelerometer {
+      rotation 0 0 1 1.5708
+    }
+    DEF BODY_SHAPE Shape {
+      appearance PBRAppearance {
+        baseColor 0.8 0.8 0.8
+        roughness 1
+        metalness 0
+      }
+      geometry Box {
+        size 0.2 0.4 0.075
+      }
+    }
+    DEF REAR_RIGHT_WHEEL HingeJoint {
+      jointParameters HingeJointParameters {
+        axis -1 0 0
+        anchor 0.13 -0.15 -0.0495
+      }
+      device [
+        PositionSensor {
+          name "position_RR"
+        }
+        RotationalMotor {
+          name "rear_right_wheel"
+          maxVelocity 225
+          maxTorque 0.4
+        }
+      ]
+      endPoint Solid {
+        translation 0.13 -0.15 -0.0495000000000001
+        rotation -1 0 0 0
+        children [
+          DEF WHEEL_ROT Transform {
+            rotation 0 -1 0 1.5708
+            children [
+              Shape {
+                appearance TireRubber {
+                }
+                geometry DEF WHEEL_CYL Cylinder {
+                  height 0.036
+                  radius 0.048
+                }
+              }
+            ]
+          }
+        ]
+        name "rear right wheel"
+        contactMaterial "tire"
+        boundingObject DEF WHEEL_ROT Transform {
+          rotation 0 -1 0 1.5708
+          children [
+            Shape {
+              appearance TireRubber {
+              }
+              geometry DEF WHEEL_CYL Cylinder {
+                height 0.036
+                radius 0.048
+              }
+            }
+          ]
+        }
+        physics Physics {
+          density -1
+          mass 0.4
+        }
+      }
+    }
+    DEF REAR_LEFT_WHEEL HingeJoint {
+      jointParameters HingeJointParameters {
+        axis -1 0 0
+        anchor -0.13 -0.15 -0.0495
+      }
+      device [
+        PositionSensor {
+          name "position_RL"
+        }
+        RotationalMotor {
+          name "rear_left_wheel"
+          maxVelocity 225
+          maxTorque 0.4
+        }
+      ]
+      endPoint Solid {
+        translation -0.13 -0.15 -0.0495
+        rotation -1 0 0 0
+        children [
+          USE WHEEL_ROT
+        ]
+        name "rear left wheel"
+        contactMaterial "tire"
+        boundingObject USE WHEEL_ROT
+        physics Physics {
+          density -1
+          mass 0.4
+        }
+      }
+    }
+    DEF RIGHT_STEER HingeJoint {
+      jointParameters HingeJointParameters {
+        axis 0 0 1
+        anchor 0.13 0.15 -0.0495
+      }
+      device [
+        RotationalMotor {
+          name "right_steer"
+          minPosition -0.7
+          maxPosition 0.7
+        }
+      ]
+      endPoint Solid {
+        translation 0.13 0.15 -0.0495
+        children [
+          DEF FRONT_RIGHT_WHEEL HingeJoint {
+            jointParameters HingeJointParameters {
+              axis -1 0 0
+            }
+            device [
+              PositionSensor {
+                name "position_FR"
+              }
+              RotationalMotor {
+                name "front_right_wheel"
+                maxVelocity 225
+                maxTorque 0.4
+              }
+            ]
+            endPoint Solid {
+              rotation -1 0 0 0
+              children [
+                USE WHEEL_ROT
+              ]
+              contactMaterial "tire"
+              boundingObject USE WHEEL_ROT
+              physics Physics {
+                density -1
+                mass 0.4
+              }
+            }
+          }
+        ]
+        name "right steer"
+        boundingObject DEF DUMMY Sphere {
+          radius 0.01
+        }
+        physics Physics {
+        }
+      }
+    }
+    DEF LEFT_STEER HingeJoint {
+      jointParameters HingeJointParameters {
+        axis 0 0 1
+        anchor -0.13 0.15 -0.0495
+      }
+      device [
+        RotationalMotor {
+          name "left_steer"
+          minPosition -0.7
+          maxPosition 0.7
+        }
+      ]
+      endPoint Solid {
+        translation -0.13 0.15 -0.0495
+        children [
+          DEF FRONT_LEFT_WHEEL HingeJoint {
+            jointParameters HingeJointParameters {
+              axis -1 0 0
+            }
+            device [
+              PositionSensor {
+                name "position_FL"
+              }
+              RotationalMotor {
+                name "front_left_wheel"
+                maxVelocity 225
+                maxTorque 0.4
+              }
+            ]
+            endPoint Solid {
+              rotation -1 0 0 0
+              children [
+                USE WHEEL_ROT
+              ]
+              contactMaterial "tire"
+              boundingObject USE WHEEL_ROT
+              physics Physics {
+                density -1
+                mass 0.4
+              }
+            }
+          }
+        ]
+        name "left steer"
+        boundingObject DEF DUMMY Sphere {
+          radius 0.01
+        }
+        physics Physics {
+        }
+      }
+    }
+  ]
+  name "Car"
+  boundingObject DEF BODY_SHAPE Shape {
+    appearance PBRAppearance {
+      baseColor 0.8 0.8 0.8
+      roughness 1
+      metalness 0
+    }
+    geometry Box {
+      size 0.2 0.4 0.075
+    }
+  }
+  physics Physics {
+    density -1
+    mass 2.5
+  }
+  controller "py_controller"
+}
